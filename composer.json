@@ -1,0 +1,19 @@
+{
+    "name": "lokhman/silex-autoreload",
+    "type": "library",
+    "description": "Silex 2.0+ service provider for AutoReload functionality",
+    "keywords": ["silex", "tools", "autoreload"],
+    "license": "MIT",
+    "authors": [{
+        "name": "Alexander Lokhman",
+        "email": "alex.lokhman@gmail.com"
+    }],
+    "autoload": {
+        "psr-4": { "Lokhman\\Silex\\": "src/Silex" }
+    },
+    "require": {
+        "ext-apcu": "*",
+        "silex/silex": "~2.0",
+        "symfony/finder": "^3.2"
+    }
+}
