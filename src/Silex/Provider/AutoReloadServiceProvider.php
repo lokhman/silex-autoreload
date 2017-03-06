@@ -3,6 +3,7 @@
  * Tools for Silex 2+ framework.
  *
  * @author Alexander Lokhman <alex.lokhman@gmail.com>
+ *
  * @link https://github.com/lokhman/silex-tools
  *
  * Copyright (c) 2016 Alexander Lokhman <alex.lokhman@gmail.com>
@@ -30,24 +31,26 @@ namespace Lokhman\Silex\Provider;
 
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
-use Silex\Application;
 use Silex\Api\BootableProviderInterface;
+use Silex\Application;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Finder\Finder;
 
 /**
  * Silex service provider for AutoReload functionality.
  *
  * @author Alexander Lokhman <alex.lokhman@gmail.com>
+ *
  * @link https://github.com/lokhman/silex-tools
  */
-class AutoReloadServiceProvider implements ServiceProviderInterface, BootableProviderInterface {
-
+class AutoReloadServiceProvider implements ServiceProviderInterface, BootableProviderInterface
+{
     /**
      * {@inheritdoc}
      */
-    public function register(Container $app) {
+    public function register(Container $app)
+    {
         $app['autoreload'] = false;
         $app['autoreload.interval'] = 60;
         $app['autoreload.uri'] = '/__autoreload';
@@ -57,7 +60,8 @@ class AutoReloadServiceProvider implements ServiceProviderInterface, BootablePro
     /**
      * {@inheritdoc}
      */
-    public function boot(Application $app) {
+    public function boot(Application $app)
+    {
         if (!$app['autoreload']) {
             return false;
         }
@@ -79,7 +83,7 @@ class AutoReloadServiceProvider implements ServiceProviderInterface, BootablePro
             array_walk($files, [$finder, 'name']);
         }
 
-        $app->after(function(Request $request, Response $response) use ($app) {
+        $app->after(function (Request $request, Response $response) use ($app) {
             $contentType = $response->headers->get('Content-Type');
             if (strpos($contentType, 'text/html') !== 0) {
                 return;
@@ -105,7 +109,7 @@ class AutoReloadServiceProvider implements ServiceProviderInterface, BootablePro
             $response->setContent($dom->saveHTML());
         }, Application::LATE_EVENT);
 
-        $app->get($app['autoreload.uri'], function() use ($app, $finder) {
+        $app->get($app['autoreload.uri'], function () use ($app, $finder) {
             set_time_limit(0);
 
             $tick = 0;
@@ -133,7 +137,7 @@ class AutoReloadServiceProvider implements ServiceProviderInterface, BootablePro
             return new Response(null, $status);
         });
 
-        $app->get($app['autoreload.js_uri'], function() use ($app) {
+        $app->get($app['autoreload.js_uri'], function () use ($app) {
             $content = <<<EOF
 (function __autoreload(init) {
     var xhr = new XMLHttpRequest();
@@ -160,10 +164,10 @@ class AutoReloadServiceProvider implements ServiceProviderInterface, BootablePro
     xhr.send();
 })(true);
 EOF;
+
             return new Response($content, 200, [
                 'Content-Type' => 'text/javascript',
             ]);
         });
     }
-
 }
